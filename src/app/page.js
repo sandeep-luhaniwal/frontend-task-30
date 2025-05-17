@@ -1,8 +1,13 @@
 "use client";
-import { useState } from 'react';
+import { useState } from "react";
+import axios from "axios";
 
 export default function Home() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [response, setResponse] = useState(null);
 
   const handleChange = (e) => {
@@ -12,23 +17,26 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('https://backend-task-30.onrender.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const res = await axios.post("https://backend-task-30.onrender.com/submit", formData);
+      setResponse(res.data.received);
 
-    const data = await res.json();
-    setResponse(data.received);
-
-    // Clear form after submission
-    setFormData({ name: '', email: '', message: '' });
+      // Clear form
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setResponse({ error: "Something went wrong. Please try again later." });
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form onSubmit={handleSubmit} className="bg-white shadow-md p-6 rounded-md w-full max-w-md space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md p-6 rounded-md w-full max-w-md space-y-4"
+      >
         <h2 className="text-2xl font-bold text-center">Contact Form</h2>
+
         <input
           name="name"
           placeholder="Name"
@@ -39,8 +47,8 @@ export default function Home() {
         />
         <input
           name="email"
-          placeholder="Email"
           type="email"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           className="w-full border p-2 rounded"
@@ -54,6 +62,7 @@ export default function Home() {
           className="w-full border p-2 rounded"
           required
         />
+
         <button
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
@@ -64,7 +73,9 @@ export default function Home() {
         {response && (
           <div className="mt-4 p-3 bg-green-100 text-sm rounded">
             <strong>Received from backend:</strong>
-            <pre className="whitespace-pre-wrap">{JSON.stringify(response, null, 2)}</pre>
+            <pre className="whitespace-pre-wrap">
+              {JSON.stringify(response, null, 2)}
+            </pre>
           </div>
         )}
       </form>
