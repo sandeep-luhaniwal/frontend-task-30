@@ -1,8 +1,10 @@
-"use client";
-import { useState } from "react";
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 import axios from "axios";
 
-export default function Home() {
+ function App() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,7 +32,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex items-center w-full justify-center bg-gray-100 p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md p-6 rounded-md w-full max-w-md space-y-4"
@@ -82,3 +84,6 @@ export default function Home() {
     </div>
   );
 }
+
+
+export default App
