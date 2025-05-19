@@ -1,16 +1,15 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 import axios from "axios";
+import { useState } from 'react';
+import './App.css';
 
- function App() {
+function App() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
   const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(false); // 🔄 New loading state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,16 +17,17 @@ import axios from "axios";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     try {
       const res = await axios.post("https://backend-task-30.onrender.com/submit", formData);
       setResponse(res.data.received);
-
-      // Clear form
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", message: "" }); // Clear form
     } catch (error) {
       console.error("Error submitting form:", error);
       setResponse({ error: "Something went wrong. Please try again later." });
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -67,9 +67,12 @@ import axios from "axios";
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+          disabled={loading} // ⛔ Disable during loading
+          className={`w-full text-white px-4 py-2 rounded cursor-pointer transition ${
+            loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
 
         {response && (
@@ -85,5 +88,4 @@ import axios from "axios";
   );
 }
 
-
-export default App
+export default App;
